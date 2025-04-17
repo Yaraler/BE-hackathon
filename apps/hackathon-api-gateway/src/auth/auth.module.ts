@@ -1,10 +1,14 @@
 import { Module } from '@nestjs/common';
-import { LocalAuthGuard } from './local-auth.guard';
-import { JwtStrategy, LocalStrategy, StrategyModule } from '@libs/strategy/src';
-import { JwtAuthGuard } from './auth.guard';
+import { AuthService } from './auth.service';
+import { AuthController } from './auth.controller';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { StrategyModule } from '@app/strategy';
+import { GuardsModule } from '@libs/guards/src';
+
 @Module({
   imports: [
+    StrategyModule,
+    GuardsModule,
     ClientsModule.register([
       {
         name: 'USER_SERVICE',
@@ -17,8 +21,9 @@ import { ClientsModule, Transport } from '@nestjs/microservices';
           },
         },
       },
-    ]),],
-  providers: [LocalAuthGuard, JwtAuthGuard, LocalStrategy, JwtStrategy],
-  exports: [LocalAuthGuard, JwtAuthGuard],
+    ]),
+  ],
+  controllers: [AuthController],
+  providers: [AuthService],
 })
-export class GuardsModule { }
+export class AuthModule { }

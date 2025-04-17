@@ -24,6 +24,26 @@
       "@app/contracts/*": [
         "libs/contracts/src/*"
       ],
+      "@app/filter": [
+        "libs/filter/src"
+      ],
+      "@app/filter/*": [
+        "libs/filter/src/*"
+      ],
+      "@app/my-logger": [
+        "libs/my-logger/src"
+      ],
+      "@app/my-logger/*": [
+        "libs/my-logger/src/*"
+      ],
+      "@app/strategy": [
+        "libs/strategy/src",
+        "libs/strategy/src"
+      ],
+      "@app/strategy/*": [
+        "libs/strategy/src/*",
+        "libs/strategy/src/*"
+      ],
       "@libs/*": [
         "libs/*"
       ]

@@ -6,7 +6,7 @@ import { Entity, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 @Entity()
 export class Bridage {
   @PrimaryGeneratedColumn()
-  id: number;
+  _id: number;
   @OneToOne(() => User, user => user.bridage)
   user: User;
 }

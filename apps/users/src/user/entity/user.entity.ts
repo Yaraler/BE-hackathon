@@ -1,11 +1,12 @@
 import { Bridage } from "apps/bridage/src/bridage/entity/bridage.entity";
 import { DailyWorkouts } from "apps/workouts/src/daily-workouts/entity/daily-workouts.entity";
-import { Column, Entity, ManyToOne, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { Column, Entity, ObjectIdColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
+import { ObjectId } from 'mongodb';
 
-@Entity()
+@Entity('users')
 export class User {
-  @PrimaryGeneratedColumn()
-  id: number;
+  @ObjectIdColumn()
+  _id: ObjectId;
   @Column()
   email: string;
   @Column()
@@ -14,6 +15,8 @@ export class User {
   password: string
   @OneToOne(() => Bridage, bridage => bridage.user)
   bridage: Bridage;
-  @OneToMany(() => DailyWorkouts, workout => workout.id)
+  @OneToMany(() => DailyWorkouts, workout => workout._id)
   dailyWorkout: DailyWorkouts[];
+  @Column()
+  refreshToken: string;
 }

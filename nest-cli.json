@@ -37,6 +37,15 @@
         "tsConfigPath": "libs/database/tsconfig.lib.json"
       }
     },
+    "filter": {
+      "type": "library",
+      "root": "libs/filter",
+      "entryFile": "index",
+      "sourceRoot": "libs/filter/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/filter/tsconfig.lib.json"
+      }
+    },
     "guards": {
       "type": "library",
       "root": "libs/guards",
@@ -53,6 +62,24 @@
       "sourceRoot": "apps/hackathon-api-gateway/src",
       "compilerOptions": {
         "tsConfigPath": "apps/hackathon-api-gateway/tsconfig.app.json"
+      }
+    },
+    "my-logger": {
+      "type": "library",
+      "root": "libs/my-logger",
+      "entryFile": "index",
+      "sourceRoot": "libs/my-logger/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/my-logger/tsconfig.lib.json"
+      }
+    },
+    "strategy": {
+      "type": "library",
+      "root": "libs/strategy",
+      "entryFile": "index",
+      "sourceRoot": "libs/strategy/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/strategy/tsconfig.lib.json"
       }
     },
     "users": {

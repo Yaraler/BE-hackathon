@@ -4,7 +4,7 @@ import { Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
 @Entity()
 export class DailyWorkouts {
   @PrimaryGeneratedColumn()
-  id: number;
-  @ManyToOne(() => User, user => user.id)
+  _id: number;
+  @ManyToOne(() => User, user => user._id)
   user: User
 }
