@@ -24,6 +24,14 @@
       "@app/contracts/*": [
         "libs/contracts/src/*"
       ],
+      "@app/strategy": [
+        "libs/strategy/src",
+        "libs/strategy/src"
+      ],
+      "@app/strategy/*": [
+        "libs/strategy/src/*",
+        "libs/strategy/src/*"
+      ],
       "@libs/*": [
         "libs/*"
       ]
