@@ -1,45 +1,43 @@
 import { BadRequestException, HttpException, Inject, Injectable, InternalServerErrorException, Logger, UnauthorizedException } from '@nestjs/common';
 import { UserService } from '../user/user.service';
 import * as bcrypt from 'bcrypt';
-import { ValidateUserDto } from '@libs/contracts/users/validateUser.dto';
 import { RegistrationDto } from '@libs/contracts/users/registration.dto';
 import { User } from '../user/entity/user.entity';
 import { Repository } from 'typeorm';
-import { JwtService } from '@nestjs/jwt';
-import { jwtConstants } from '@libs/constants';
-import { LoginDto } from '@libs/contracts/users/login.dto';
 import { MyLoggerService } from '@app/my-logger';
-import { IUser } from '@libs/contracts/type/user';
 import { ObjectId } from 'mongodb';
-import { RefreshTokenDto } from '@libs/contracts/users/refresh-token.dto';
+import { TokenService } from '../token/token.service';
+import { RefreshAccessTokenDto } from '@libs/contracts/users/refresh-access-token.dto';
+import { TokenDto } from '@libs/contracts/token/token.dto';
+import { ValidateUserDto } from '@libs/contracts/users/validate-user.dto';
+import { TokenResposneDto } from './dto/token-response.dto';
+import { AccessTokenResponseDto } from './dto/access-token-response.dto';
 
 @Injectable()
 export class AuthService {
   constructor(
     @Inject('USER_REPOSITORY') private userRepository: Repository<User>,
     private userService: UserService,
-    private jwtService: JwtService,
+    private tokenService: TokenService,
     private readonly logger: MyLoggerService,
   ) { }
-  async validateUser(data: ValidateUserDto): Promise<any> {
+  async validateUser(data: ValidateUserDto): Promise<User | null> {
     try {
       const user = await this.userService.findOne(data.email);
-      if (user) {
-        const verifyPassword = await bcrypt.compareSync(data.password, user.password);
+      if (!user) return null;
 
-        if (!verifyPassword) {
-          return null
-        }
-        return user
-      }
-      return null;
+      const verifyPassword = await bcrypt.compare(data.password, user.password);
+      if (!verifyPassword) return null;
+
+      return user;
+
     } catch (error) {
       this.logger.error(error)
       throw new InternalServerErrorException('Validate user failed');
     }
   }
 
-  async registration(data: RegistrationDto): Promise<any> {
+  async registration(data: RegistrationDto): Promise<TokenResposneDto> {
     try {
       const { name, email, password, brigadId } = data
       if (await this.userService.findOne(email)) {
@@ -54,7 +52,7 @@ export class AuthService {
         DailyWorkoutsIds: []
       })
       const user = await this.userRepository.save(newUser);
-      return this.create_token(user)
+      return this.createToken(user)
     } catch (error) {
       this.logger.error(error)
       if (error instanceof BadRequestException) {
@@ -64,36 +62,29 @@ export class AuthService {
     }
   }
 
-  async login(data: User) {
+  async login(data: User): Promise<TokenResposneDto> {
     try {
-      return await this.create_token(data)
+      return await this.createToken(data)
     } catch (error) {
       this.logger.error(error)
       throw new InternalServerErrorException('Login failed');
     }
-
   }
 
-  async refresh(data: RefreshTokenDto) {
+  async refresh(data: RefreshAccessTokenDto): Promise<AccessTokenResponseDto> {
     try {
       const { refreshToken } = data;
 
-      const payload = this.jwtService.verify(refreshToken, {
-        secret: jwtConstants.refresh_secret
-      });
+      const payload = await this.tokenService.verifyRefreshToken(refreshToken);
+      const user = await this.userService.findById(payload.id);
 
-      const user = await this.userService.findById(payload.sub);
-      if (!user) {
-        throw new BadRequestException('The user id dosent find.');
+      if (!user) throw new BadRequestException('The user id dosent find.');
 
-      }
       const isMatch = await bcrypt.compare(refreshToken, user.refreshToken);
       if (!isMatch) throw new UnauthorizedException('Invalid refresh token');
 
-      const newAccessToken = this.jwtService.sign(
-        { username: user.username, sub: user._id },
-        { secret: jwtConstants.secret, expiresIn: "24h" },
-      );
+      const newAccessToken = await this.tokenService.createAccessToken(payload)
+
       return { accessToken: newAccessToken };
     } catch (err) {
       this.logger.error(err)
@@ -101,18 +92,11 @@ export class AuthService {
     }
   }
 
-  async create_token(user: User) {
+  private async createToken(user: User): Promise<TokenResposneDto> {
     try {
-      const payload = { name: user.name, sub: user._id };
-
-      const accessToken = this.jwtService.sign(payload, {
-        secret: process.env.JWT_SECRET,
-        expiresIn: '24h',
-      });
-      const refreshToken = this.jwtService.sign(payload, {
-        secret: jwtConstants.secret,
-        expiresIn: '24d',
-      });
+      const payload: TokenDto = { name: user.name, id: user._id.toString() };
+      const accessToken = await this.tokenService.createAccessToken(payload)
+      const refreshToken = await this.tokenService.createRefreshToken(payload)
       await this.saveRefreshToken(user._id.toString(), refreshToken);
       return {
         accessToken,
@@ -121,14 +105,12 @@ export class AuthService {
     } catch (err) {
       if (!(err instanceof HttpException)) {
         throw new InternalServerErrorException('Token create error')
-
       }
       throw err;
-
     }
   }
 
-  async saveRefreshToken(userId: string, refreshToken: string) {
+  private async saveRefreshToken(userId: string, refreshToken: string) {
     const hashed = await bcrypt.hash(refreshToken, 10);
     await this.userRepository.update(userId, { refreshToken: hashed });
   }

@@ -2,7 +2,7 @@ import { Body, Controller, Get, Param, Post, UploadedFiles, UseInterceptors, Use
 import { BrigadeService } from './bridage.service';
 import * as Multer from 'multer';
 import { FileFieldsInterceptor } from '@nestjs/platform-express';
-import { CreateBrigadeDto } from '@libs/contracts/bridage/createBridage.dto';
+import { CreateBrigadeDto } from '@libs/contracts/bridage/create-bridage.dto';
 
 @Controller('brigade')
 export class BrigadeController {

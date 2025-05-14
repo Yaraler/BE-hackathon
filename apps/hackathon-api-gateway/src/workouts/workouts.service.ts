@@ -16,6 +16,15 @@ export class WorkoutsService {
       throw error;
     }
   }
+
+  async getWorkout(idUser: string) {
+    try {
+      return await firstValueFrom(this.wrkoutsClient.send("workouts.get-workouts", idUser))
+    } catch (error) {
+      throw error;
+    }
+  }
+
   async getFirstWorkout(idUser: string) {
     try {
       return await firstValueFrom(this.wrkoutsClient.send("workouts.get-first-workouts", idUser))
@@ -34,6 +43,15 @@ export class WorkoutsService {
 
   }
 
+  async fast(data: any) {
+    try {
+      console.log(data)
+      return await firstValueFrom(this.wrkoutsClient.send("workouts.fast-create-workout", data))
+    } catch (error) {
+      throw error;
+    }
+
+  }
 
 
 }

@@ -1,7 +1,7 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern } from '@nestjs/microservices';
 import { BrigadeService } from './brigade.service';
-import { CreateBrigadeFileDto } from '@libs/contracts/bridage/createBridage.dto';
+import { CreateBrigadeFileDto } from '@libs/contracts/bridage/create-bridage.dto';
 
 @Controller('bridage')
 export class BrigadeController {
@@ -14,7 +14,7 @@ export class BrigadeController {
   }
   @MessagePattern("brigade.getBrigade")
   async getBrigade() {
-    return await this.brigadeService.getBrigade()
+    return await this.brigadeService.getAllBrigade()
   }
   @MessagePattern("brigade.getOneBrigade")
   async getOneBrigade() {

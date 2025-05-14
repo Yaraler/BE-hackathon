@@ -19,11 +19,21 @@ export class WorkoutsController {
   async getfirstWorkouts(@Request() data: ExpressRequest & { user: GetUserDto }) {
     return await this.workoutsService.getFirstWorkout(data.user.userId)
   }
+  @Get("get-workout")
+  @UseGuards(JwtAuthGuard)
+  async getWorkouts(@Request() data: ExpressRequest & { user: GetUserDto }) {
+    return await this.workoutsService.getWorkout(data.user.userId)
+  }
+
   @Post("end-first-workout")
   @UseGuards(JwtAuthGuard)
   async endFirst(@Body() data: Exercises, @Request() user: ExpressRequest & { user: GetUserDto }) {
     console.log("start")
     return this.workoutsService.endFirstWorkout(user.user.userId, data)
+  }
+  @Post("fast-workout")
+  async fast(@Body() data: any) {
+    return this.workoutsService.fast(data)
   }
 }
 

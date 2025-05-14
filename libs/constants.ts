@@ -1,6 +1,6 @@
 require('dotenv').config()
 export const jwtConstants = {
-  secret: process.env.SECRET,
-  refresh_secret: process.env.REFRESH_SECRET
+  access_secret: process.env.SECRET ? process.env.SECRET : "secret",
+  refresh_secret: process.env.refresh_secret ? process.env.refresh_secret : "secret_refresh"
 };
 

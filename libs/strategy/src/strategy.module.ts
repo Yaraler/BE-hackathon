@@ -23,7 +23,7 @@ import { jwtConstants } from '@libs/constants';
     ]),
     PassportModule.register({ session: false }),
     JwtModule.register({
-      secret: jwtConstants.secret,
+      secret: jwtConstants.access_secret,
       signOptions: { expiresIn: "24h" },
     })
   ],

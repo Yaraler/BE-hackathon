@@ -1,9 +1,7 @@
 import { IsArray, IsObject, IsString, ValidateNested } from "class-validator"
-import { StrategyCreated } from "passport"
 import { Transform, Type } from "class-transformer"
 import * as Multer from 'multer';
-import { BadRequestException } from "@nestjs/common";
-import { CreateRequirementsBrigade } from "./createRequirementBridage";
+import { CreateRequirementsBrigade } from "./create-requirement-bridage";
 
 
 export class CreateBrigadeDto {
@@ -27,7 +25,7 @@ export class CreateBrigadeDto {
     return [];
   })
   @Type(() => CreateRequirementsBrigade)
-  requirementsBrigade?: CreateRequirementsBrigade[];
+  requirementsBrigade: CreateRequirementsBrigade[];
 }
 
 export class CreateBrigadeFileDto extends CreateBrigadeDto {

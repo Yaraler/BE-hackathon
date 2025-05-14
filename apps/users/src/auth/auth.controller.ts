@@ -1,12 +1,12 @@
 import { Controller } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { MessagePattern } from '@nestjs/microservices';
-import { ValidateUserDto } from '@libs/contracts/users/validateUser.dto';
+import { ValidateUserDto } from '@libs/contracts/users/validate-user.dto';
 import { RegistrationDto } from '@libs/contracts/users/registration.dto';
 import { LoginDto } from '@libs/contracts/users/login.dto';
 import { IUser } from '@libs/contracts/type/user';
 import { User } from '../user/entity/user.entity';
-import { RefreshTokenDto } from '@libs/contracts/users/refresh-token.dto';
+import { RefreshAccessTokenDto } from '@libs/contracts/users/refresh-access-token.dto';
 
 @Controller('auth')
 export class AuthController {
@@ -24,7 +24,7 @@ export class AuthController {
     return await this.authService.login(data)
   }
   @MessagePattern("auth.refresh")
-  async refresh(data: RefreshTokenDto) {
+  async refresh(data: RefreshAccessTokenDto) {
     return await this.authService.refresh(data);
   }
 

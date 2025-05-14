@@ -1,4 +1,5 @@
-import { RefreshTokenDto } from '@libs/contracts/users/refresh-token.dto';
+import { TokenDto } from '@libs/contracts/token/token.dto';
+import { RefreshAccessTokenDto } from '@libs/contracts/users/refresh-access-token.dto';
 import { RegistrationDto } from '@libs/contracts/users/registration.dto';
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
@@ -14,7 +15,7 @@ export class AuthService {
   async login(data: User) {
     return await firstValueFrom(this.usersClient.send("auth.login", data))
   }
-  async refresh(data: RefreshTokenDto) {
+  async refresh(data: RefreshAccessTokenDto) {
     return await firstValueFrom(this.usersClient.send("auth.refresh", data))
   }
 }

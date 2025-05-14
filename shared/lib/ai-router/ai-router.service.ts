@@ -39,7 +39,7 @@ export class AiRouterService {
       throw error;
     }
   }
-  async commentExercise(requirements: RequirementsBrigade, exercises: Exercises): Promise<{ comment: string }> {
+  async commentExercise(requirements: RequirementsBrigade | string, exercises: Exercises): Promise<{ comment: string }> {
     try {
       const prompt = `
       Напиши короткий вдячний коментар для вправи "${exercises.name}", яку користувач виконав ${exercises.count} разів, з урахуванням фізичних вимог:

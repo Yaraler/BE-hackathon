@@ -7,9 +7,9 @@ import { BrigadeController } from './bridage.controller';
 import { BrigadeService } from './bridage.service';
 import { brigadeProviders } from 'apps/brigade/src/brigade/provider/brigade';
 import { requirementsBrigadeProviders } from 'apps/brigade/src/requirements_brigade/provider/requirements-brigade';
-import { AwsService } from 'shared/lib/aws/aws.service';
 import { ConfigModule } from '@nestjs/config';
 import awsConfig from '@libs/config/aws.config';
+import { AwsService } from '@aws/aws.service';
 @Module({
   imports: [
     DatabaseModule,
@@ -37,6 +37,9 @@ import awsConfig from '@libs/config/aws.config';
       },
     })],
   controllers: [BrigadeController],
-  providers: [BrigadeService, ...brigadeProviders, ...requirementsBrigadeProviders, AwsService],
+  providers: [BrigadeService,
+    ...brigadeProviders,
+    ...requirementsBrigadeProviders,
+    AwsService],
 })
 export class BridageModule { }

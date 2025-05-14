@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import * as Multer from 'multer';
-import { CreateBrigadeDto, CreateBrigadeFileDto } from '@libs/contracts/bridage/createBridage.dto';
+import { CreateBrigadeDto, CreateBrigadeFileDto } from '@libs/contracts/bridage/create-bridage.dto';
 
 @Injectable()
 export class BrigadeService {

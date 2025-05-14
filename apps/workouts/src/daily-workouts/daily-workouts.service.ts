@@ -1,25 +1,18 @@
-import { IExercises } from '@libs/contracts/user-indicators/ICheckingIndicator';
 import { ICreateWorkouts } from '@libs/contracts/workouts/ICreateWorkouts';
 import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common';
-import { BrigadeService } from 'apps/brigade/src/brigade/brigade.service';
 import { UserService } from 'apps/users/src/user/user.service';
-import { AiRouterService } from 'shared/lib/ai-router/ai-router.service';
 import { MongoRepository, Repository } from 'typeorm';
 import { DailyWorkouts } from './entity/daily-workouts.entity';
-import { create } from 'domain';
 import { User } from 'apps/users/src/user/entity/user.entity';
 import { ObjectId } from 'mongodb';
 import { ExercisesService } from '../exercises/exercises.service';
 import { Exercises } from '../exercises/entity/exercises';
-import { constants } from 'perf_hooks';
-import { RequirementsBrigade } from 'apps/brigade/src/requirements_brigade/entity/requirements-brigade.entity';
 
 @Injectable()
 export class DailyWorkoutsService {
   constructor(
-    private readonly aiRouterService: AiRouterService,
+    //   private readonly aiRouterService: AiRouterService,
     private readonly userService: UserService,
-    private readonly brigadeService: BrigadeService,
     private readonly exercisesService: ExercisesService,
     @Inject('USER_REPOSITORY')
     private readonly userRepository: Repository<User>,
@@ -32,21 +25,22 @@ export class DailyWorkoutsService {
       if (user.FirstWorkoutICheckndicatorId) {
         throw new InternalServerErrorException('User alerdi have firstWorkouts ');
       }
-      const brigade = await this.brigadeService.getOneBrigade(user.brigadeId)
-      const res = await this.aiRouterService.createFirstWorkoutsCheckingIndicators(brigade.requirements)
+      //     const brigade = await this.brigadeService.getOneBrigade(user.brigadeId)
+      //   const res = await this.aiRouterService.createFirstWorkoutsCheckingIndicators(brigade.requirements)
       const data: ICreateWorkouts = {
         name: "check your indicator",
         description: "A workout designed to help you assess your physical condition through a series of exercises that monitor strength, endurance, and flexibility. Ideal for tracking progress and identifying areas for improvement.",
         userId: idUser,
       }
-      const exercisesId = await this.exercisesService.createExercises(res)
-      data.exercisesId = exercisesId
-      console.log(exercisesId)
+      //const exercisesId = await this.exercisesService.createExercises(res)
+      //data.exercisesId = exercisesId
+      //console.log(exercisesId)
       const saveWorkouts = await this.createWorkouts(data)
       user.FirstWorkoutICheckndicatorId = saveWorkouts._id
       this.userRepository.save(user)
 
-      return res
+      return ""
+      //res
     } catch (error) {
       throw error;
     }
@@ -83,10 +77,42 @@ export class DailyWorkoutsService {
   async endFirstExercises(idUser: string, exercises: Exercises) {
     try {
       const user = await this.userService.findById(idUser)
-      const brigade = await this.brigadeService.getOneBrigade(user.brigadeId.toString())
-      const res = await this.aiRouterService.commentExercise(brigade.requirements, exercises)
-      const update = await this.exercisesService.endExercises(res.comment, exercises)
-      return update
+      const brigade = {
+        "name": "Бригада морської піхоти ЗСУ",
+        "shortName": "МП",
+        "description": "Морська піхота України — елітний род військ, призначений для ведення бойових дій на суходолі, морі та прибережній зоні. Висока адаптація до складних погодних умов, довготривалих маршів та раптових змін середовища. Фізичні нормативи морпіхів надзвичайно жорсткі — вони повинні працювати в бронежилетах, з озброєнням та спорядженням в умовах підвищеного ризику.",
+        "requirementsBrigade": [
+          {
+            "exercise": "Біг з навантаженням 10 кг (1000 м)",
+            "minimum": 4.5,
+            "maximum": 6
+          },
+          {
+            "exercise": "Підтягування у бронежилеті",
+            "minimum": 6,
+            "maximum": null
+          },
+          {
+            "exercise": "Плавання 100 м",
+            "minimum": 2.5,
+            "maximum": 4
+          },
+          {
+            "exercise": "Віджимання",
+            "minimum": 35,
+            "maximum": null
+          },
+          {
+            "exercise": "Присідання з навантаженням",
+            "minimum": 30,
+            "maximum": null
+          }
+        ]
+      }
+      //const res = await this.aiRouterService.commentExercise(brigade, exercises)
+      //      const update = await this.exercisesService.endExercises(res.comment, exercises)
+      return ""
+      //update
     } catch (error) {
       throw error;
     }
@@ -101,7 +127,37 @@ export class DailyWorkoutsService {
     }
 
   }
+  async fastCreate(date: any) {
+    try {
+      const user = await this.userService.findById("68153bdbe35d79a29d4baed8")
+      const exercisesId = await this.exercisesService.createExercises(date.exercises)
+      const data: ICreateWorkouts = {
+        name: "Відновлювальний тренувальний комплекс",
+        description: "Повний тренувальний комплекс для сили та витривалості. Цей день відпочинку дозволяє відновити сили після важких тренувань, підготувати тіло до нових викликів і зменшити ризик травм. Відпочинок допомагає відновити м'язи, відновити енергетичні запаси і запобігти перенавантаженню організму. Для солдатів це критично важливо, адже фізична витривалість, швидкість відновлення і здатність до адаптації безпосередньо впливають на ефективність виконання завдань. Це час для відновлення, який дозволяє бути готовим до будь-яких фізичних навантажень, що можуть виникнути під час служби.",
+        userId: "68153bdbe35d79a29d4baed8",
+        exercisesId: exercisesId
+      }
+      const saveWorkouts = await this.createWorkouts(data)
+      user.DailyWorkoutsIds.push(saveWorkouts._id)
+      return this.userRepository.save(user)
+    } catch (e) {
+      throw e
+    }
+  }
+  async getWorkouts(idUser: string) {
+    try {
+      const user = await this.userService.findById(idUser)
+      if (!user) {
+        throw new InternalServerErrorException('User alerdi have firstWorkouts ');
+      }
+      const res = await Promise.all(user.DailyWorkoutsIds.map(async (elem) => await this.getWorkoutsWithExercises(elem)))
+      console.log(res[0].exercises)
+      return res
+    } catch (error) {
+      throw error;
+    }
 
+  }
   async getWorkoutsWithExercises(id: string) {
     try {
       const workouts = await this.dailyWorkoutsRepository.findOne({

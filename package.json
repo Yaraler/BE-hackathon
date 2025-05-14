@@ -75,7 +75,7 @@
     "prettier": "^3.4.2",
     "source-map-support": "^0.5.21",
     "supertest": "^7.0.0",
-    "ts-jest": "^29.2.5",
+    "ts-jest": "^29.3.2",
     "ts-loader": "^9.5.2",
     "ts-node": "^10.9.2",
     "tsconfig-paths": "^4.2.0",
@@ -101,7 +101,9 @@
     "testEnvironment": "node",
     "roots": [
       "<rootDir>/apps/",
-      "<rootDir>/libs/"
+      "<rootDir>/libs/",
+      "<rootDir>/shared/",
+      "<rootDir>/tests/"
     ],
     "moduleNameMapper": {
       "^@app/contracts(|/.*)$": "<rootDir>/libs/contracts/src/$1",
@@ -109,7 +111,10 @@
       "^@app/filter(|/.*)$": "<rootDir>/libs/filter/src/$1",
       "^@app/guards(|/.*)$": "<rootDir>/libs/guards/src/$1",
       "^@app/my-logger(|/.*)$": "<rootDir>/libs/my-logger/src/$1",
-      "^@app/strategy(|/.*)$": "<rootDir>/libs/strategy/src/$1"
+      "^@app/strategy(|/.*)$": "<rootDir>/libs/strategy/src/$1",
+      "^@aws/(.*)$": "<rootDir>/shared/lib/aws/src/$1",
+      "^@libs/(.*)$": "<rootDir>/libs/$1",
+      "/^@fixture\/(.*)$/": "<rootDir>/tests/fixtures/$1"
     }
   }
 }

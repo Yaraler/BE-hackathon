@@ -4,7 +4,6 @@ import { DailyWorkoutsController } from './daily-workouts.controller';
 import { DatabaseModule } from '@libs/database/src';
 import { BrigadeModule } from 'apps/brigade/src/brigade/brigade.module';
 import { HttpModule } from '@nestjs/axios';
-import { RequirementsBrigadeModule } from 'apps/brigade/src/requirements_brigade/requirements_bridage.module';
 import { MyLoggerModule } from '@app/my-logger';
 import { ConfigModule } from '@nestjs/config';
 import openRouterConfig from '@libs/config/open-router.config';
@@ -19,16 +18,13 @@ import { UserModule } from 'apps/users/src/user/user.module';
   imports: [
     DatabaseModule,
     UserModule,
-    BrigadeModule,
     HttpModule,
-    RequirementsBrigadeModule,
     MyLoggerModule,
     ExercisesModule,
     AiRouterModule,
     ConfigModule.forRoot({
       load: [openRouterConfig],
     }),
-
   ],
   controllers: [DailyWorkoutsController],
   providers: [DailyWorkoutsService, AiRouterService, ...exercisesProviders, ...dailyWorkoutsProviders],
