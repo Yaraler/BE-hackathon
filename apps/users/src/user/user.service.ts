@@ -2,7 +2,6 @@ import { Inject, Injectable, InternalServerErrorException } from '@nestjs/common
 import { User } from './entity/user.entity';
 import { Repository } from 'typeorm';
 import { MyLoggerService } from '@app/my-logger';
-import { ObjectId } from 'mongodb';
 @Injectable()
 export class UserService {
   constructor(
@@ -26,7 +25,7 @@ export class UserService {
   async findById(id: string): Promise<any | undefined> {
     try {
       return await this.userRepository.findOne({
-        where: { _id: new ObjectId(id) },
+        where: { _id: id },
         relations: ['bridage', 'dailyWorkout'],
       });
     } catch (error) {

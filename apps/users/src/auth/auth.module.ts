@@ -8,6 +8,7 @@ import { MyLoggerModule } from '@app/my-logger';
 import { UserModule } from '../user/user.module';
 import { JwtStrategy } from '@app/strategy';
 import { TokenModule } from '../token/token.module';
+import { HashModule } from '@shared/lib/hash/hash.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { TokenModule } from '../token/token.module';
     forwardRef(() => UserModule),
     PassportModule.register({ session: false }),
     TokenModule,
+    HashModule
   ],
   controllers: [AuthController],
   providers: [AuthService, ...userProviders, JwtStrategy],

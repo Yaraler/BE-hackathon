@@ -12,6 +12,7 @@ import { TokenDto } from '@libs/contracts/token/token.dto';
 import { ValidateUserDto } from '@libs/contracts/users/validate-user.dto';
 import { TokenResposneDto } from './dto/token-response.dto';
 import { AccessTokenResponseDto } from './dto/access-token-response.dto';
+import { HashService } from '@shared/lib/hash/hash.service';
 
 @Injectable()
 export class AuthService {
@@ -20,13 +21,14 @@ export class AuthService {
     private userService: UserService,
     private tokenService: TokenService,
     private readonly logger: MyLoggerService,
+    private readonly hashService: HashService,
   ) { }
   async validateUser(data: ValidateUserDto): Promise<User | null> {
     try {
       const user = await this.userService.findOne(data.email);
       if (!user) return null;
 
-      const verifyPassword = await bcrypt.compare(data.password, user.password);
+      const verifyPassword = await this.hashService.compareHash(data.password, user.password);
       if (!verifyPassword) return null;
 
       return user;
@@ -43,12 +45,12 @@ export class AuthService {
       if (await this.userService.findOne(email)) {
         throw new BadRequestException('The email was already taken.');
       }
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const hashedPassword = await this.hashService.hashPassword(password);
       const newUser = this.userRepository.create({
         name: name,
         email: email,
         password: hashedPassword,
-        brigadeId: new ObjectId(brigadId),
+        brigadeId: brigadId,
         DailyWorkoutsIds: []
       })
       const user = await this.userRepository.save(newUser);
@@ -80,14 +82,13 @@ export class AuthService {
 
       if (!user) throw new BadRequestException('The user id dosent find.');
 
-      const isMatch = await bcrypt.compare(refreshToken, user.refreshToken);
+      const isMatch = await this.hashService.compareHash(refreshToken, user.refreshToken);
       if (!isMatch) throw new UnauthorizedException('Invalid refresh token');
 
       const newAccessToken = await this.tokenService.createAccessToken(payload)
 
       return { accessToken: newAccessToken };
     } catch (err) {
-      this.logger.error(err)
       throw new UnauthorizedException('Invalid refresh token');
     }
   }
@@ -111,7 +112,7 @@ export class AuthService {
   }
 
   private async saveRefreshToken(userId: string, refreshToken: string) {
-    const hashed = await bcrypt.hash(refreshToken, 10);
+    const hashed = await this.hashService.hashPassword(refreshToken);
     await this.userRepository.update(userId, { refreshToken: hashed });
   }
 }

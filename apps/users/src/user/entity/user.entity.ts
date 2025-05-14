@@ -1,11 +1,10 @@
-import { DailyWorkouts } from "apps/workouts/src/daily-workouts/entity/daily-workouts.entity";
 import { Column, Entity, ManyToOne, ObjectIdColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ObjectId } from 'mongodb';
 
 @Entity('users')
 export class User {
   @ObjectIdColumn()
-  _id: ObjectId;
+  _id: string;
   @Column()
   email: string;
   @Column()
@@ -15,7 +14,7 @@ export class User {
   @Column()
   password: string
   @Column()
-  brigadeId: ObjectId
+  brigadeId: string
   @Column()
   DailyWorkoutsIds?: ObjectId[];
   @Column()

@@ -10,7 +10,7 @@ import { RequirementsBrigade } from "../../requirements_brigade/entity/requireme
 export class Brigade {
   @ObjectIdColumn()
   @Expose()
-  _id: ObjectId;
+  _id: string;
   @Column()
   name: string
   @Column()
