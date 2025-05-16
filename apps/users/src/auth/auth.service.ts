@@ -13,6 +13,7 @@ import { ValidateUserDto } from '@libs/contracts/users/validate-user.dto';
 import { TokenResposneDto } from './dto/token-response.dto';
 import { AccessTokenResponseDto } from './dto/access-token-response.dto';
 import { HashService } from '@shared/lib/hash/hash.service';
+import { error } from 'console';
 
 @Injectable()
 export class AuthService {
@@ -25,7 +26,7 @@ export class AuthService {
   ) { }
   async validateUser(data: ValidateUserDto): Promise<User | null> {
     try {
-      const user = await this.userService.findOne(data.email);
+      const user = await this.userService.findByEmail(data.email);
       if (!user) return null;
 
       const verifyPassword = await this.hashService.compareHash(data.password, user.password);
@@ -42,7 +43,7 @@ export class AuthService {
   async registration(data: RegistrationDto): Promise<TokenResposneDto> {
     try {
       const { name, email, password, brigadId } = data
-      if (await this.userService.findOne(email)) {
+      if (await this.userService.findByEmail(email)) {
         throw new BadRequestException('The email was already taken.');
       }
       const hashedPassword = await this.hashService.hashPassword(password);
@@ -67,9 +68,9 @@ export class AuthService {
   async login(data: User): Promise<TokenResposneDto> {
     try {
       return await this.createToken(data)
-    } catch (error) {
-      this.logger.error(error)
-      throw new InternalServerErrorException('Login failed');
+    } catch (err) {
+      console.log(err)
+      throw err
     }
   }
 
@@ -89,7 +90,7 @@ export class AuthService {
 
       return { accessToken: newAccessToken };
     } catch (err) {
-      throw new UnauthorizedException('Invalid refresh token');
+      throw err
     }
   }
 
@@ -104,15 +105,13 @@ export class AuthService {
         refreshToken,
       };
     } catch (err) {
-      if (!(err instanceof HttpException)) {
-        throw new InternalServerErrorException('Token create error')
-      }
       throw err;
     }
   }
 
-  private async saveRefreshToken(userId: string, refreshToken: string) {
+  private async saveRefreshToken(userId: string, refreshToken: string): Promise<void> {
     const hashed = await this.hashService.hashPassword(refreshToken);
     await this.userRepository.update(userId, { refreshToken: hashed });
+    return;
   }
 }
