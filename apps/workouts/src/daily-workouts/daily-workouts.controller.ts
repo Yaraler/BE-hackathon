@@ -23,7 +23,6 @@ export class DailyWorkoutsController {
 
   @MessagePattern("workouts.end-first-workout")
   async endFirstWorkouts(data: any) {
-    console.log(data)
     return await this.dailyWorkoutsService.endFirstExercises(data.idUser, data.exercises)
   }
   @MessagePattern("workouts.fast-create-workout")

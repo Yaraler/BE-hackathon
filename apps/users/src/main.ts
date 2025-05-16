@@ -17,6 +17,8 @@ async function bootstrap() {
   });
   app.useGlobalPipes(new ValidationPipe({ transform: true }));
   app.useGlobalFilters(new RpcHttpExceptionFilter());
-  await app.listen();
+  await app.listen().catch((e) => {
+    console.log(e)
+  })
 }
 bootstrap();

@@ -1,11 +1,9 @@
-import { BadRequestException, HttpException, Inject, Injectable, InternalServerErrorException, Logger, UnauthorizedException } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable, InternalServerErrorException, UnauthorizedException } from '@nestjs/common';
 import { UserService } from '../user/user.service';
-import * as bcrypt from 'bcrypt';
 import { RegistrationDto } from '@libs/contracts/users/registration.dto';
 import { User } from '../user/entity/user.entity';
 import { Repository } from 'typeorm';
 import { MyLoggerService } from '@app/my-logger';
-import { ObjectId } from 'mongodb';
 import { TokenService } from '../token/token.service';
 import { RefreshAccessTokenDto } from '@libs/contracts/users/refresh-access-token.dto';
 import { TokenDto } from '@libs/contracts/token/token.dto';
@@ -13,7 +11,7 @@ import { ValidateUserDto } from '@libs/contracts/users/validate-user.dto';
 import { TokenResposneDto } from './dto/token-response.dto';
 import { AccessTokenResponseDto } from './dto/access-token-response.dto';
 import { HashService } from '@shared/lib/hash/hash.service';
-import { error } from 'console';
+import { Role } from '@libs/enum/role.enum';
 
 @Injectable()
 export class AuthService {
@@ -28,7 +26,6 @@ export class AuthService {
     try {
       const user = await this.userService.findByEmail(data.email);
       if (!user) return null;
-
       const verifyPassword = await this.hashService.compareHash(data.password, user.password);
       if (!verifyPassword) return null;
 
@@ -52,7 +49,8 @@ export class AuthService {
         email: email,
         password: hashedPassword,
         brigadeId: brigadId,
-        DailyWorkoutsIds: []
+        DailyWorkoutsIds: [],
+        role: Role.User
       })
       const user = await this.userRepository.save(newUser);
       return this.createToken(user)
@@ -96,7 +94,7 @@ export class AuthService {
 
   private async createToken(user: User): Promise<TokenResposneDto> {
     try {
-      const payload: TokenDto = { name: user.name, id: user._id.toString() };
+      const payload: TokenDto = { name: user.name, id: user._id.toString(), role: user.role };
       const accessToken = await this.tokenService.createAccessToken(payload)
       const refreshToken = await this.tokenService.createRefreshToken(payload)
       await this.saveRefreshToken(user._id.toString(), refreshToken);

@@ -1,5 +1,6 @@
 import { Column, Entity, ManyToOne, ObjectIdColumn, OneToMany, OneToOne, PrimaryGeneratedColumn } from "typeorm";
 import { ObjectId } from 'mongodb';
+import { Role } from "@libs/enum/role.enum";
 
 @Entity('users')
 export class User {
@@ -16,11 +17,13 @@ export class User {
   @Column()
   brigadeId: string
   @Column()
-  DailyWorkoutsIds?: ObjectId[];
+  DailyWorkoutsIds?: string[];
   @Column()
-  FirstWorkoutICheckndicatorId?: ObjectId //  DailyWorkoutsIds
+  FirstWorkoutICheckndicatorId?: string //  DailyWorkoutsIds
   @Column({ default: false })
   state: boolean
   @Column()
   refreshToken: string;
+  @Column({ default: "user" })
+  role: Role
 }

@@ -1,3 +1,4 @@
+import { Role } from "@libs/enum/role.enum";
 import { User } from "apps/users/src/user/entity/user.entity";
 
 
@@ -12,5 +13,6 @@ export const testUser: User = {
   DailyWorkoutsIds: [],
   FirstWorkoutICheckndicatorId: undefined,
   state: false,
-  refreshToken: "token"
+  refreshToken: "token",
+  role: Role.User
 }

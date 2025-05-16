@@ -3,7 +3,6 @@ import { MongoRepository } from 'typeorm';
 import { Exercises } from './entity/exercises';
 import { IExercises } from '@libs/contracts/user-indicators/ICheckingIndicator';
 import { ObjectId } from 'mongodb';
-import { User } from 'apps/users/src/user/entity/user.entity';
 
 @Injectable()
 export class ExercisesService {

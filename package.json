@@ -12,7 +12,7 @@
     "fast:start": "nest start --watch && nest user --watch",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
-    "dev": "concurrently \"npm run start:brigade\" \"npm run start:users\" \" npm run start:workouts\" \"npm run start:dev\"   ",
+    "dev": "concurrently \"npm run start:brigade\" \"npm run start:users\"  \"npm run start:dev\"   ",
     "start:prod": "node dist/apps/BE-hackathon/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",

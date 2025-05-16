@@ -11,7 +11,7 @@ export class WorkoutsService {
 
   async createFirstWorkout(idUser: string) {
     try {
-      return await firstValueFrom(this.wrkoutsClient.send("workouts.create-first-workouts", idUser))
+      //  return await firstValueFrom(this.wrkoutsClient.send("workouts.create-first-workouts", idUser))
     } catch (error) {
       throw error;
     }
@@ -19,7 +19,7 @@ export class WorkoutsService {
 
   async getWorkout(idUser: string) {
     try {
-      return await firstValueFrom(this.wrkoutsClient.send("workouts.get-workouts", idUser))
+      // return await firstValueFrom(this.wrkoutsClient.send("workouts.get-workouts", idUser))
     } catch (error) {
       throw error;
     }
@@ -27,7 +27,7 @@ export class WorkoutsService {
 
   async getFirstWorkout(idUser: string) {
     try {
-      return await firstValueFrom(this.wrkoutsClient.send("workouts.get-first-workouts", idUser))
+      //     return await firstValueFrom(this.wrkoutsClient.send("workouts.get-first-workouts", idUser))
     } catch (error) {
       throw error;
     }
@@ -36,7 +36,7 @@ export class WorkoutsService {
   async endFirstWorkout(idUser: string, exercises: Exercises) {
     try {
       console.log(exercises)
-      return await firstValueFrom(this.wrkoutsClient.send("workouts.end-first-workout", { idUser, exercises }))
+      //return await firstValueFrom(this.wrkoutsClient.send("workouts.end-first-workout", { idUser, exercises }))
     } catch (error) {
       throw error;
     }
@@ -46,7 +46,7 @@ export class WorkoutsService {
   async fast(data: any) {
     try {
       console.log(data)
-      return await firstValueFrom(this.wrkoutsClient.send("workouts.fast-create-workout", data))
+      //return await firstValueFrom(this.wrkoutsClient.send("workouts.fast-create-workout", data))
     } catch (error) {
       throw error;
     }

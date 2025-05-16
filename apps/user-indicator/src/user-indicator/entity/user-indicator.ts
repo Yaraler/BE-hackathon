@@ -10,9 +10,6 @@ export class UserIndicator {
   name: string
   @Column()
   description: string
-
-
-
   @Column()
   userId: ObjectId;
 }

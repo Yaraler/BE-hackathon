@@ -10,6 +10,7 @@ import { firstValueFrom } from 'rxjs';
 export class AuthService {
   constructor(@Inject("USER_SERVICE") private usersClient: ClientProxy) { }
   async registration(data: RegistrationDto) {
+    console.log("1")
     return await firstValueFrom(this.usersClient.send("auth.registration", data))
   }
   async login(data: User) {
