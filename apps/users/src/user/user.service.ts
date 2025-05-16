@@ -11,22 +11,20 @@ export class UserService {
   ) { }
 
 
-  async findOne(email: string): Promise<any | undefined> {
+  async findByEmail(email: string): Promise<User | null> {
     try {
       return await this.userRepository.findOne({
         where: { email },
-        relations: ['bridage', 'dailyWorkout'],
       });
     } catch (error) {
       this.logger.error(error)
       throw new InternalServerErrorException('Get user failed.');
     }
   }
-  async findById(id: string): Promise<any | undefined> {
+  async findById(id: string): Promise<User | null> {
     try {
       return await this.userRepository.findOne({
         where: { _id: id },
-        relations: ['bridage', 'dailyWorkout'],
       });
     } catch (error) {
       this.logger.error(error)

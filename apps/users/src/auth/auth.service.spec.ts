@@ -5,16 +5,13 @@ import { AuthService } from "./auth.service"
 import { Test, TestingModule } from "@nestjs/testing"
 import { MyLoggerService } from "@app/my-logger"
 import { TokenService } from "../token/token.service"
-import { testRefreshCorrect, testRefreshIncorrect } from "../../.../../../../tests/fixtures/auth.fixture"
-import { testToken } from "../../.../../../../tests/fixtures/token.fixture"
 import { JsonWebTokenError } from "@nestjs/jwt"
-import { testUser } from "../../.../../../../tests/fixtures/user.fixture"
 import { HashService } from "@shared/lib/hash/hash.service"
-
-const mockUser = {
-  _id: 'user123',
-  name: 'Test User',
-};
+import { testToken } from "@tests/fixtures/token.fixture"
+import { RefreshAccessTokenDto } from "@libs/contracts/users/refresh-access-token.dto"
+import { ValidateUserDto } from "@libs/contracts/users/validate-user.dto"
+import { testUser } from "@tests/fixtures/user.fixture"
+import { testRefreshCorrect } from "@tests/fixtures/auth.fixture"
 
 const mockTokenService = {
   verifyRefreshToken: jest.fn().mockImplementation((token: string) => {
@@ -23,18 +20,36 @@ const mockTokenService = {
     }
     throw new JsonWebTokenError('Invalid token');
   }),
-  createAccessToken: jest.fn().mockReturnValue("token")
+  createAccessToken: jest.fn().mockReturnValue("token"),
+  createRefreshToken: jest.fn().mockReturnValue("refresh_token")
+
 }
 const mockUserService = {
   findById: jest.fn().mockImplementation((id: string) => {
-    if (id == "1") {
+    if (id == testUser._id) {
       return testUser
     }
     return undefined
-  })
+  }),
+  findByEmail: jest.fn().mockImplementation((email: string): User | undefined => {
+    if (email == testUser.email) {
+      return testUser
+    }
+    return undefined
+  }),
+
+}
+const mockDb = {
+  update: jest.fn().mockReturnValueOnce(testUser)
 }
 const mockHashService = {
-  compareHash: jest.fn().mockReturnValue(true)
+  compareHash: jest.fn().mockImplementation((firstData: string, secondData: string): boolean => {
+    if (firstData == secondData) {
+      return true
+    }
+    return false
+  }),
+  hashPassword: jest.fn().mockReturnValue("hash")
 }
 describe('UserService', () => {
   let service: AuthService
@@ -43,6 +58,7 @@ describe('UserService', () => {
   let tokenService: TokenService
   let hashService: HashService
   beforeEach(async () => {
+    jest.clearAllMocks();
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
@@ -52,7 +68,7 @@ describe('UserService', () => {
         },
         {
           provide: 'USER_REPOSITORY',
-          useValue: {},
+          useValue: mockDb,
         },
         {
           provide: UserService,
@@ -75,14 +91,67 @@ describe('UserService', () => {
     hashService = module.get<HashService>(HashService)
   })
 
-
-  describe("create token", () => {
+  describe("refreshToken", () => {
     it("should return access and refresh token", async () => {
       const result = await service.refresh(testRefreshCorrect)
 
-      console.log(result)
-      expect(result).toEqual({ accessToken: "token" })
+      expect(result).toEqual({ accessToken: "token" });
+      expect(mockTokenService.verifyRefreshToken).toHaveBeenCalledWith("token");
+      expect(mockUserService.findById).toHaveBeenCalledWith("1");
+      expect(mockHashService.compareHash).toHaveBeenCalledWith("token", testUser.refreshToken);
+      expect(mockTokenService.createAccessToken).toHaveBeenCalledWith(testToken);
+    })
+
+    it("should return jwt error", async () => {
+      const data: RefreshAccessTokenDto = { refreshToken: "not correct token" }
+      await expect(service.refresh(data)).rejects.toThrow(JsonWebTokenError)
+    })
+  })
+  describe("login", () => {
+    it("return tokens", async () => {
+      const testResData = {
+        accessToken: "token",
+        refreshToken: "refresh_token",
+      }
+      const res = await service.login(testUser)
+      expect(res).toEqual(testResData)
+    })
+  })
+  describe("validateUser", () => {
+    it("Should return user", async () => {
+      const mockValidateUserDto: ValidateUserDto = {
+        email: testUser.email,
+        password: testUser.password
+      }
+      const res = await service.validateUser(mockValidateUserDto)
+      expect(res).toEqual(testUser)
+
+    })
+    it("Should return null", async () => {
+      const testNotCorrectEmail = "not_correct_email"
+      const mockValidateUserDto: ValidateUserDto = {
+        email: testNotCorrectEmail,
+        password: testUser.password
+      }
+      const res = await service.validateUser(mockValidateUserDto)
+      expect(res).toBeNull()
+      expect(mockUserService.findByEmail).toHaveBeenCalledWith(testNotCorrectEmail)
+      expect(mockHashService.compareHash).not.toHaveBeenCalled();
+    })
+    it("Should return null because password not correct", async () => {
+      const testNotCorrectPassword = "not_correct_password"
+      const mockValidateUserDto: ValidateUserDto = {
+        email: testUser.email,
+        password: testNotCorrectPassword
+      }
+      const res = await service.validateUser(mockValidateUserDto)
+      expect(res).toBeNull()
+      expect(mockUserService.findByEmail).toHaveBeenCalledWith(testUser.email)
+      expect(mockHashService.compareHash).toHaveBeenCalledWith(testNotCorrectPassword, testUser.password)
     })
   })
 })
+
+
+
 

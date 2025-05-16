@@ -115,7 +115,7 @@
       "^@aws/(.*)$": "<rootDir>/shared/lib/aws/src/$1",
       "^@libs/(.*)$": "<rootDir>/libs/$1",
       "^@shared/(.*)$": "<rootDir>/shared/$1",
-      "/^@fixture\/(.*)$/": "<rootDir>/tests/fixtures/$1"
+      "^@tests/(.*)$": "<rootDir>/tests/$1"
     }
   }
 }

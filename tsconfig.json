@@ -48,8 +48,8 @@
       "@shared/*": [
         "shared/*"
       ],
-      "@fixture/*": [
-        "tests/fixtures/*"
+      "@tests/*": [
+        "tests/*"
       ]
     }
   }
