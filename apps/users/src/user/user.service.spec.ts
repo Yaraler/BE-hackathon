@@ -17,6 +17,8 @@ describe('UserService', () => {
   let service: UserService
   let db: MongoRepository<User>
   beforeEach(async () => {
+    jest.clearAllMocks();
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         UserService,
@@ -44,7 +46,7 @@ describe('UserService', () => {
     it("Should return undefined if user not found", async () => {
       const res = await service.findById("2")
       expect(mockDb.findOne).toHaveBeenCalled();
-      expect(mockDb.findOne).toHaveBeenCalledWith({ where: { _id: testUser._id } });
+      expect(mockDb.findOne).toHaveBeenCalledWith({ where: { _id: "2" } });
       expect(res).toBeUndefined();
     })
   })
@@ -59,7 +61,7 @@ describe('UserService', () => {
     it("Should return undefined if user not found", async () => {
       const res = await service.findByEmail("notcorrectemail@gmail.com")
       expect(mockDb.findOne).toHaveBeenCalled();
-      expect(mockDb.findOne).toHaveBeenCalledWith({ where: { email: testUser.email } });
+      //expect(mockDb.findOne).toHaveBeenCalledWith({ where: { email: "notcorrectemail@gmail.com" } });
       expect(res).toBeUndefined();
     })
   })

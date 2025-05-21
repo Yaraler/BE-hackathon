@@ -4,7 +4,7 @@ import { Column, Entity, ObjectIdColumn } from "typeorm";
 @Entity("exercises")
 export class Exercises {
   @ObjectIdColumn()
-  _id: ObjectId;
+  _id: string;
   @Column()
   exercise: string
   @Column()

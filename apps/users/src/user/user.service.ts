@@ -15,7 +15,6 @@ export class UserService {
     try {
       return await this.userRepository.findOne({
         where: { email },
-        relations: ['bridage', 'dailyWorkout'],
       });
     } catch (error) {
       this.logger.error(error)
@@ -26,7 +25,6 @@ export class UserService {
     try {
       return await this.userRepository.findOne({
         where: { _id: id },
-        relations: ['bridage', 'dailyWorkout'],
       });
     } catch (error) {
       this.logger.error(error)
