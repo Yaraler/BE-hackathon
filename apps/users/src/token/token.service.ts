@@ -2,6 +2,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { jwtConstants } from '@libs/constants';
 import { JsonWebTokenError, JwtService } from '@nestjs/jwt';
 import { TokenDto } from '@libs/contracts/token/token.dto';
+import { JwtSignOptions } from '@nestjs/jwt';
 
 @Injectable()
 export class TokenService {
@@ -24,9 +25,17 @@ export class TokenService {
   }
   //  
   private async createToken(dataToken: TokenDto, time: string, secret: string): Promise<string> {
+    const payload = {
+      name: dataToken.name,
+      id: dataToken.id,
+      role: dataToken.role,
+    };
     const token = this.jwtService.sign(
-      dataToken,
-      { secret: secret, expiresIn: time },
+      payload as object,
+      {
+        secret: secret,
+        expiresIn: time,
+      } as JwtSignOptions,
     );
     return token
   }

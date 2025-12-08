@@ -5,7 +5,8 @@ import { exerciseTemplatesProviders } from './provider/exercise-templates.provid
 import { DatabaseModule } from '@libs/database/src';
 
 @Module({
-  controllers: [ExerciseTemplatesController, DatabaseModule],
+  imports: [DatabaseModule],
+  controllers: [ExerciseTemplatesController],
   providers: [ExerciseTemplatesService, ...exerciseTemplatesProviders],
   exports: [ExerciseTemplatesService, ...exerciseTemplatesProviders],
 })

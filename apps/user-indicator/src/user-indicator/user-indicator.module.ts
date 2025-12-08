@@ -10,7 +10,7 @@ import { DatabaseModule } from '@libs/database/src';
 import { MyLoggerModule } from '@app/my-logger';
 import { UserModule } from 'apps/users/src/user/user.module';
 import { BrigadeModule } from 'apps/brigade/src/brigade/brigade.module';
-import { AwsService } from 'shared/lib/aws/aws.service';
+import { AwsService } from '@aws/aws.service';
 import { RequirementsBrigadeService } from 'apps/brigade/src/requirements_brigade/requirements_bridage.service';
 import { RequirementsBrigadeModule } from 'apps/brigade/src/requirements_brigade/requirements_bridage.module';
 import openRouterConfig from '@libs/config/open-router.config';

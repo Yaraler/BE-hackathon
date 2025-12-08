@@ -3,6 +3,8 @@ FROM node:18-alpine
 WORKDIR /app
 
 COPY package*.json ./
+COPY nest-cli.json ./
+COPY tsconfig*.json ./
 
 RUN npm install
 
@@ -12,4 +14,5 @@ COPY . .
 
 EXPOSE 3000
 
-CMD ["sh", "-c", "npx nest user --watch && npm run start:dev"]
+# Default command (will be overridden in docker-compose)
+CMD ["sh", "-c", "npm run dev"]
