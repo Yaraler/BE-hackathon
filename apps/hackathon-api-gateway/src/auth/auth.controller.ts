@@ -11,26 +11,25 @@ import { RolesGuard } from '@libs/guards/src/admnin.gaurd';
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) { }
-  @Post("registration")
+  @Post('registration')
   async registration(@Body() data: RegistrationDto) {
-    return await this.authService.registration(data)
+    return await this.authService.registration(data);
   }
-  @Post("test")
+  @Post('test')
   @Roles(Role.Admin)
   @UseGuards(JwtAuthGuard, RolesGuard)
   async test(@Request() req: ExpressRequest & { user: User }) {
-    console.log(req.user)
+    console.log(req.user);
   }
 
-
-  @Post("login")
+  @Post('login')
   @UseGuards(LocalAuthGuard)
   async login(@Request() req: ExpressRequest & { user: User }) {
-    return await this.authService.login(req.user)
+    console.log('fda');
+    return await this.authService.login(req.user);
   }
-  @Post("refresh")
+  @Post('refresh')
   async refresh(@Body() data: RefreshAccessTokenDto) {
-    return await this.authService.refresh(data)
+    return await this.authService.refresh(data);
   }
-
 }
